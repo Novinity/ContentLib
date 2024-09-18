@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace ContentLib.Modules;
 
+/// <summary>
+/// Class that handles the registration and loading of custom monsters
+/// </summary>
 public class Monsters {
     public static List<CustomMonster> registeredMonsters = new List<CustomMonster>();
 
