@@ -5,6 +5,7 @@ using System.Reflection;
 
 namespace ContentLib.Modules;
 
+// TODO
 public class Items {
     public static List<ArtifactItem> registeredArtifacts = new List<ArtifactItem>();
 
