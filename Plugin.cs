@@ -13,6 +13,8 @@ public class Plugin : BaseUnityPlugin {
     internal new static ManualLogSource Logger { get; private set; } = null!;
     internal static Harmony? Harmony { get; set; }
 
+    public bool shopInitialized = false;
+
     private void Awake() {
         Logger = base.Logger;
         Instance = this;

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.Rendering.UI;
 
 namespace ContentLib.Modules;
 
@@ -9,6 +10,7 @@ namespace ContentLib.Modules;
 /// Class that handles the registration and loading of custom monsters
 /// </summary>
 public class Monsters {
+    // The list of registered monsters from every mod
     public static List<CustomMonster> registeredMonsters = new List<CustomMonster>();
 
     public static CustomMonster RegisterMonster(CustomMonster monster) {
@@ -69,31 +71,56 @@ public class Monsters {
 
     private static void FixMaterials(GameObject gameObject) {
         // Get the M_Monster material from one of the vanilla monsters
-        Material targetMaterial = Resources.Load<GameObject>("Zombe").GetComponentInChildren<SkinnedMeshRenderer>().material;
+        Material targetMaterial = new Material(Resources.Load<GameObject>("Zombe").GetComponentInChildren<SkinnedMeshRenderer>().material);
         // Go through all the renderers in the monster and set it's material to the M_Monster material
         foreach (Renderer renderer in gameObject.GetComponentsInChildren<Renderer>())
             renderer.material = targetMaterial;
-        foreach (SkinnedMeshRenderer skinnedMeshRenderer in gameObject.GetComponentsInChildren<SkinnedMeshRenderer>())
-            skinnedMeshRenderer.material = targetMaterial;
     }
 
-    // TODO
+    // Methods to add custom materials to selected renderer(s) or gameobjects.
+
+    // Default method to just set the material of a single renderer
     public static void SetCustomMaterial(Renderer renderer, Material material) {
-        renderer.material = material;
+        // Create a new material using the shader name from the original, but not the actual shader it uses
+        // This is done this way because for whatever reason shaders don't load from asset bundles properly
+        // So we make an attempt to just use the same shader it uses
+        Material targetMaterial = new Material(Shader.Find(material.shader.name));
+        // Copy all properties from the passed material to the new material
+        targetMaterial.CopyMatchingPropertiesFromMaterial(material);
+        // Set the renderer's material to the new material
+        renderer.material = targetMaterial;
     }
 
+    // Overload to set certain index of renderer materials
+    public static void SetCustomMaterial(Renderer renderer, Material material, int index) {
+        // Create a new material using the shader name from the original, but not the actual shader it uses
+        Material targetMaterial = new Material(Shader.Find(material.shader.name));
+        // Copy all properties from the passed material to the new material
+        targetMaterial.CopyMatchingPropertiesFromMaterial(material);
+        // Set the renderer's material to the new material
+        renderer.materials[index] = targetMaterial;
+    }
+
+    // Overload to set the material of an array of renderers
     public static void SetCustomMaterial(Renderer[] renderers, Material material) {
+        // Create a new material using the shader name from the original, but not the actual shader it uses
+        Material targetMaterial = new Material(Shader.Find(material.shader.name));
+        // Copy all properties from the passed material to the new material
+        targetMaterial.CopyMatchingPropertiesFromMaterial(material);
         foreach (Renderer r in renderers)
-            r.material = material;
+            // Set the renderer's material to the new material
+            r.material = targetMaterial;
     }
 
+    // Overload to set all renderers' materials under a gameobject
     public static void SetCustomMaterial(GameObject monsterPrefab, Material material) {
-        GameObject primitive = GameObject.CreatePrimitive(PrimitiveType.Plane);
-        primitive.active = false;
-        Material diffuse = primitive.GetComponent<MeshRenderer>().sharedMaterial;
-        GameObject.DestroyImmediate(primitive);
+        // Create a new material using the shader name from the original, but not the actual shader it uses
+        Material targetMaterial = new Material(Shader.Find(material.shader.name));
+        // Copy all properties from the passed material to the new material
+        targetMaterial.CopyMatchingPropertiesFromMaterial(material);
         foreach (Renderer renderer in monsterPrefab.GetComponentsInChildren<Renderer>())
-            renderer.material = diffuse;
+            // Set the renderer's material to the new material
+            renderer.material = targetMaterial;
     }
 
     // A custom class for handling all necessary info for registering monsters

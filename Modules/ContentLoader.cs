@@ -4,6 +4,7 @@ using Photon.Pun;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Zorro.Core;
 
 namespace ContentLib.Modules;
 
@@ -47,11 +48,6 @@ public class ContentLoader {
         return customMonster.objectPrefab.GetComponent<IBudgetCost>();
     }
 
-    // TODO
-    private void AddShopItems() {
-
-    }
-
     // Patch to call the AddMonstersToRoundSpawner method once it starts
     [HarmonyPatch(typeof(RoundSpawner))]
     [HarmonyPatch(nameof(RoundSpawner.Start))]
@@ -60,10 +56,4 @@ public class ContentLoader {
         Plugin.Logger.LogInfo("[ContentLib] RoundSpawner postfix called");
         AddMonstersToRoundSpawner(__instance);
     }
-
-    // TODO
-    /*[HarmonyPatch(nameof(ShopHandler.InitShop))]
-    private static void Postfix_ShopHandler_InitShop(ShopHandler __instance) {
-        //shopInitialized = true;
-    }*/
 }
