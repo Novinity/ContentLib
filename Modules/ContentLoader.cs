@@ -13,6 +13,11 @@ namespace ContentLib.Modules;
 /// </summary>
 [HarmonyPatch]
 public class ContentLoader {
+    /// <summary>
+    /// Method to add a given object to the Photon spawnable prefab pool
+    /// This allows custom objects to be spawned on the network
+    /// </summary>
+    /// <param name="go"></param>
     public static void AddObjectToPool(GameObject go) {
         DefaultPool pool = PhotonNetwork.PrefabPool as DefaultPool;
         if (pool != null) {
@@ -20,7 +25,10 @@ public class ContentLoader {
         }
     }
 
-    // Method to add all registered monsters to the passed RoundSpawner, allowing them to spawn naturally
+    /// <summary>
+    /// Method to add all registered monsters to the passed RoundSpawner, allowing them to spawn naturally
+    /// </summary>
+    /// <param name="spawner"></param>
     private static void AddMonstersToRoundSpawner(RoundSpawner spawner) {
         // If we aren't the master client (host), stop
         if (!PhotonNetwork.IsMasterClient) return;
@@ -43,12 +51,18 @@ public class ContentLoader {
         spawner.possibleSpawns = spawner.possibleSpawns.Concat(list.Select((IBudgetCost m) => m.gameObject)).ToArray();
     }
 
-    // Method to return the passed monster's IBudgetCost component
+    /// <summary>
+    /// Method to return the passed monster's IBudgetCost component
+    /// </summary>
+    /// <param name="customMonster"></param>
+    /// <returns></returns>
     private static IBudgetCost LoadMonster(Monsters.CustomMonster customMonster) {
         return customMonster.objectPrefab.GetComponent<IBudgetCost>();
     }
 
-    // Patch to call the AddMonstersToRoundSpawner method once it starts
+    /// <summary>
+    /// Patch to call the AddMonstersToRoundSpawner method once it starts
+    /// </summary>
     [HarmonyPatch(typeof(RoundSpawner))]
     [HarmonyPatch(nameof(RoundSpawner.Start))]
     [HarmonyPostfix]

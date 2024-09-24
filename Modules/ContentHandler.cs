@@ -11,14 +11,22 @@ namespace ContentLib.Modules;
 public class ContentHandler {
     public static List<ContentEvent> EventList = new List<ContentEvent>();
 
+    /// <summary>
+    /// Registers the given content event
+    /// </summary>
+    /// <param name="contentEvent"></param>
     public static void RegisterEvent(ContentEvent contentEvent) {
         // Add the passed contentEvent to the list of events
         Plugin.Logger.LogInfo($"[ContentLib] Registering content event for {contentEvent.GetName()}");
         EventList.Add(contentEvent);
     }
-    
-    // A custom method for getting the correct content event ID
-    // Referenced from the ContentLibrary mod
+
+    /// <summary>
+    /// A custom method for getting the correct content event ID
+    /// Referenced from the ContentLibrary mod
+    /// </summary>
+    /// <param name="contentEventName"></param>
+    /// <returns></returns>
     public static ushort GetEventID(string contentEventName) {
         // The base game reserves IDs 1-1999 around, so we start at 2000.
 
@@ -40,8 +48,10 @@ public class ContentHandler {
 
 [HarmonyPatch(typeof(ContentEventIDMapper))]
 internal class ContentEventIDMapperPatches {
-    // Patch for getting the content events to allow custom events to work
-    // Referenced from the ContentLibrary mod
+    /// <summary>
+    /// Patch for getting the content events to allow custom events to work
+    /// Referenced from the ContentLibrary mod
+    /// </summary>
     [HarmonyPrefix]
     [HarmonyPatch(nameof(ContentEventIDMapper.GetContentEvent))]
     public static bool GetContentEventPrefix(ref ushort id, ref ContentEvent __result) {
