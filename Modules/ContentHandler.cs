@@ -1,7 +1,6 @@
 ﻿using HarmonyLib;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ContentLib.Modules;
 
@@ -30,13 +29,13 @@ public class ContentHandler {
     public static ushort GetEventID(string contentEventName) {
         // The base game reserves IDs 1-1999 around, so we start at 2000.
 
-        Plugin.Logger.LogInfo(EventList.Count);
+        Plugin.Logger.LogDebug(EventList.Count);
 
         // Make sure the event has been registered
         int foundIndex = EventList.FindIndex(match => match.GetType().Name == contentEventName);
         if (foundIndex == -1) {
             for (int index = 0; index < EventList.Count; index++) {
-                Plugin.Logger.LogInfo($"[ContentLib_Debug] {EventList[index].GetType().Name}, {contentEventName}, {EventList[index].GetType().Name == contentEventName}");
+                Plugin.Logger.LogDebug($"[ContentLib_Debug] {EventList[index].GetType().Name}, {contentEventName}, {EventList[index].GetType().Name == contentEventName}");
             }
             Plugin.Logger.LogError($"[ContentLib] GetEventID for {contentEventName} returned -1");
         }

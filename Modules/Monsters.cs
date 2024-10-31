@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
-using UnityEngine.Rendering.UI;
 
 namespace ContentLib.Modules;
 
@@ -48,38 +47,24 @@ public class Monsters {
     }
 
     /// <summary>
-    /// Register a single monster using it's prefab and weight
+    /// Register a single monster using its prefab and weight
     /// </summary>
     /// <param name="objectPrefab"></param>
     /// <param name="weight"></param>
     /// <returns></returns>
     public static CustomMonster RegisterMonster(GameObject objectPrefab, float weight) {
-        // If the monster has already been registered, don't continue.
+        // If this monster object has already been registered, don't continue.
         var existing = registeredMonsters.FirstOrDefault(x => x.objectPrefab == objectPrefab);
         if (existing != null) {
-            Plugin.Logger.LogWarning($"[ContentLib] Attempted to register monster that is already registered! - Monster Name: {existing.name}");
+            Plugin.Logger.LogWarning($"[ContentLib] Attempted to register monster prefab that is already registered! - Monster Name: {existing.name}, Prefab Name: {objectPrefab.name}");
             return null;
         }
 
         // Create a new CustomMonster object using the passed parameters
         CustomMonster monster = new CustomMonster(objectPrefab, weight);
 
-        Plugin.Logger.LogInfo($"[ContentLib] Registering monster with name {objectPrefab.name}");
-
-        // Set the modName of the custom monster
-        var callingAssembly = Assembly.GetCallingAssembly();
-        var modDLL = callingAssembly.GetName().Name;
-        monster.modName = modDLL;
-
-        // Run material fix up to allow monster to be rendered
-        FixMaterials(monster.objectPrefab);
-
-        // Add the monster object to the allowed network prefabs and add it to the registeredMonsters list
-        ContentLoader.AddObjectToPool(objectPrefab);
-        registeredMonsters.Add(monster);
-
-        // Pass back the monster
-        return monster;
+        // Return the result of RegisterMonster using the CustomMonster object
+        return RegisterMonster(monster);
     }
 
     /// <summary>
