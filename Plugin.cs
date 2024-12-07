@@ -1,44 +1,40 @@
-using BepInEx;
-using BepInEx.Logging;
 using HarmonyLib;
 using System.Security.Permissions;
+using UnityEngine;
 
 [assembly: SecurityPermission(SecurityAction.RequestMinimum, SkipVerification = true)]
 namespace ContentLib;
 
-[BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
-[ContentWarningPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_VERSION, false)]
-public class Plugin : BaseUnityPlugin {
+[ContentWarningPlugin("novinity.ContentLib", "1.0.1", false)]
+public class Plugin {
     public static Plugin Instance { get; private set; } = null!;
-    internal new static ManualLogSource Logger { get; private set; } = null!;
     internal static Harmony? Harmony { get; set; }
 
     public bool shopInitialized = false;
 
     private void Awake() {
-        Logger = base.Logger;
         Instance = this;
 
         Patch();
 
-        Logger.LogInfo($"{MyPluginInfo.PLUGIN_GUID} v{MyPluginInfo.PLUGIN_VERSION} has loaded!");
+        Debug.Log($"{MyPluginInfo.PLUGIN_GUID} v{MyPluginInfo.PLUGIN_VERSION} has loaded!");
     }
 
     internal static void Patch() {
         Harmony ??= new Harmony(MyPluginInfo.PLUGIN_GUID);
 
-        Logger.LogDebug("Patching...");
+        Debug.Log("Patching...");
 
         Harmony.PatchAll();
 
-        Logger.LogDebug("Finished patching!");
+        Debug.Log("Finished patching!");
     }
 
     internal static void Unpatch() {
-        Logger.LogDebug("Unpatching...");
+        Debug.Log("Unpatching...");
 
         Harmony?.UnpatchSelf();
 
-        Logger.LogDebug("Finished unpatching!");
+        Debug.Log("Finished unpatching!");
     }
 }

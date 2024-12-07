@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Reflection;
-using System.Text;
 using UnityEngine;
 
 namespace ContentLib.Modules;
@@ -17,14 +14,14 @@ public class BundleHelper {
     /// <param name="filename"></param>
     /// <returns></returns>
     public static AssetBundle LoadAssetBundle(string filename) {
-        Plugin.Logger.LogDebug($"Loading Asset Bundle {filename}");
+        Debug.Log($"Loading Asset Bundle {filename}");
         // Get the calling mod's DLL location
         string sAssemblyLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         // Load the bundle using the DLL location and passed file name
         AssetBundle loadedBundle = AssetBundle.LoadFromFile(Path.Combine(sAssemblyLocation, filename));
         // If the bundle doesn't exist
         if (loadedBundle == null) {
-            Plugin.Logger.LogError($"Failed to load asset bundle {filename} [{sAssemblyLocation}]");
+            Debug.Log($"Failed to load asset bundle {filename} [{sAssemblyLocation}]");
             return null;
         }
         return loadedBundle;
@@ -36,12 +33,12 @@ public class BundleHelper {
     /// <param name="path"></param>
     /// <returns></returns>
     public static AssetBundle LoadAssetBundleFromDirectPath(string path) {
-        Plugin.Logger.LogDebug($"Loading Asset Bundle from path {path}");
+        Debug.Log($"Loading Asset Bundle from path {path}");
         // Load the bundle using just the passed path
         AssetBundle loadedBundle = AssetBundle.LoadFromFile(path);
         // If the bundle doesn't exist
         if (loadedBundle == null) {
-            Plugin.Logger.LogError($"Failed to load asset bundle {path}");
+            Debug.Log($"Failed to load asset bundle {path}");
             return null;
         }
         return loadedBundle;

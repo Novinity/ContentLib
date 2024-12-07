@@ -23,10 +23,10 @@ public class Monsters {
         // If the monster has already been registered, don't continue.
         var existing = registeredMonsters.FirstOrDefault(x => x == monster);
         if (existing != null) {
-            Plugin.Logger.LogWarning($"[ContentLib] Attempted to register monster that is already registered! - Monster Name: {existing.name}");
+            Debug.Log($"[ContentLib] Attempted to register monster that is already registered! - Monster Name: {existing.name}");
             return null;
         }
-        Plugin.Logger.LogInfo($"[ContentLib] Registering monster with name {monster.name}");
+        Debug.Log($"[ContentLib] Registering monster with name {monster.name}");
 
         // If the user hasn't passed the modName, add it ourself.
         if (monster.modName == "Unknown") {
@@ -56,7 +56,7 @@ public class Monsters {
         // If this monster object has already been registered, don't continue.
         var existing = registeredMonsters.FirstOrDefault(x => x.objectPrefab == objectPrefab);
         if (existing != null) {
-            Plugin.Logger.LogWarning($"[ContentLib] Attempted to register monster prefab that is already registered! - Monster Name: {existing.name}, Prefab Name: {objectPrefab.name}");
+            Debug.Log($"[ContentLib] Attempted to register monster prefab that is already registered! - Monster Name: {existing.name}, Prefab Name: {objectPrefab.name}");
             return null;
         }
 

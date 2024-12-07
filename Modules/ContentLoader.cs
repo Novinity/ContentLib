@@ -31,7 +31,7 @@ public class ContentLoader {
     private static void AddMonstersToRoundSpawner(RoundSpawner spawner) {
         // If we aren't the master client (host), stop
         if (!PhotonNetwork.IsMasterClient) return;
-        Plugin.Logger.LogDebug("[ContentLib] Adding monsters to round spawner");
+        Debug.Log("[ContentLib] Adding monsters to round spawner");
 
         List<IBudgetCost> list = new List<IBudgetCost>();
         int num = 0;
@@ -59,7 +59,6 @@ public class ContentLoader {
         return customMonster.objectPrefab.GetComponent<IBudgetCost>();
     }
 
-
     /// <summary>
     /// Patch to call the AddMonstersToRoundSpawner method once it starts
     /// </summary>
@@ -67,7 +66,7 @@ public class ContentLoader {
     [HarmonyPatch(nameof(RoundSpawner.Start))]
     [HarmonyPostfix]
     private static void Postfix_RoundSpawner_Start(RoundSpawner __instance) {
-        Plugin.Logger.LogDebug("[ContentLib] RoundSpawner postfix called");
+        Debug.Log("[ContentLib] RoundSpawner postfix called");
         AddMonstersToRoundSpawner(__instance);
     }
 }

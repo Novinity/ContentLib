@@ -5,7 +5,7 @@
         <AssemblyName>ContentLib</AssemblyName>
         <Product>ContentLib</Product>
         <!-- Change to whatever version you're currently on. -->
-        <Version>1.0.0</Version>
+        <Version>0.1.0</Version>
     </PropertyGroup>
 
     <!-- Project Properties -->
@@ -14,6 +14,7 @@
         <RootNamespace>ContentLib</RootNamespace>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>latest</LangVersion>
+        <CWDir Condition=" '$(CWDir)' == '' ">F:\SteamLibrary\steamapps\common\Content Warning</CWDir>
     </PropertyGroup>
 
     <!-- Enable Nullable for better IDE null-checking -->
@@ -43,16 +44,45 @@
         viewing Private Information in stack traces.
         -->
         <PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=./</PathMap>
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+        <Title>ContentLib</Title>
+        <Authors>Novinity</Authors>
+        <Company>Novinity</Company>
+        <Description>A Content Warning API that allows for easy addition of custom monsters, items, maps, and more.</Description>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <RepositoryUrl>https://github.com/Novinity/ContentLib</RepositoryUrl>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     </PropertyGroup>
 
     <!-- Primary Package References -->
     <ItemGroup>
-        <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
-        <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.1" PrivateAssets="all" />
-        <PackageReference Include="BepInEx.Core" Version="5.*" PrivateAssets="all" />
-        <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" PrivateAssets="all" />
-        <PackageReference Include="ContentWarning.GameLibs.Steam" Version="*-*" Publicize="true" PrivateAssets="all" />
-        <PackageReference Include="UnityEngine.Modules" Version="2022.3.10" IncludeAssets="compile" PrivateAssets="all" />
+        <Reference Include="UnityEngine.CoreModule">
+            <HintPath>$(CWDir)\Content Warning_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+        </Reference>
+        <Reference Include="Unity.Mathematics">
+            <HintPath>$(CWDir)\Content Warning_Data\Managed\Unity.Mathematics.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.Modules">
+            <HintPath>$(CWDir)\Content Warning_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+        </Reference>
+        <Reference Include="Assembly-CSharp" Publicize="true" Private="false">
+            <HintPath>$(CWDir)\Content Warning_Data\Managed\Assembly-CSharp.dll</HintPath>
+        </Reference>
+        <Reference Include="Zorro.Settings.Runtime">
+            <HintPath>$(CWDir)\Content Warning_Data\Managed\Zorro.Settings.Runtime.dll</HintPath>
+        </Reference>
+        <Reference Include="Zorro.Core.Runtime">
+            <HintPath>$(CWDir)\Content Warning_Data\Managed\Zorro.Core.Runtime.dll</HintPath>
+        </Reference>
+        <Reference Include="0Harmony">
+            <HintPath>$(CWDir)\Content Warning_Data\Managed\0Harmony.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+    <ItemGroup>
+        <Reference Include="PhotonUnityNetworking">
+            <HintPath>$(CWDir)\Content Warning_Data\Managed\PhotonUnityNetworking.dll</HintPath>
+        </Reference>
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
@@ -60,6 +90,28 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="System\" />
+        <Folder Include="System\" />
+    </ItemGroup>
+
+    <Target Name="CopyOutputFileToGame" AfterTargets="Build">
+        <Copy SourceFiles="$(OutputPath)\$(AssemblyName).dll" DestinationFolder="$(CWDir)\Plugins\ContentLib" />
+    </Target>
+
+    <ItemGroup>
+        <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.2" PrivateAssets="all" />
+
+        <!-- Publicize by assembly name -->
+        <Publicize Include="Assembly-CSharp" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="LICENSE">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+        <None Update="README.md">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
     </ItemGroup>
 </Project>

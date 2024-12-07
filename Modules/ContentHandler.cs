@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace ContentLib.Modules;
 
@@ -16,7 +17,7 @@ public class ContentHandler {
     /// <param name="contentEvent"></param>
     public static void RegisterEvent(ContentEvent contentEvent) {
         // Add the passed contentEvent to the list of events
-        Plugin.Logger.LogInfo($"[ContentLib] Registering content event for {contentEvent.GetName()}");
+        Debug.Log($"[ContentLib] Registering content event for {contentEvent.GetName()}");
         EventList.Add(contentEvent);
     }
 
@@ -29,15 +30,15 @@ public class ContentHandler {
     public static ushort GetEventID(string contentEventName) {
         // The base game reserves IDs 1-1999 around, so we start at 2000.
 
-        Plugin.Logger.LogDebug(EventList.Count);
+        Debug.Log(EventList.Count);
 
         // Make sure the event has been registered
         int foundIndex = EventList.FindIndex(match => match.GetType().Name == contentEventName);
         if (foundIndex == -1) {
             for (int index = 0; index < EventList.Count; index++) {
-                Plugin.Logger.LogDebug($"[ContentLib_Debug] {EventList[index].GetType().Name}, {contentEventName}, {EventList[index].GetType().Name == contentEventName}");
+                Debug.Log($"[ContentLib_Debug] {EventList[index].GetType().Name}, {contentEventName}, {EventList[index].GetType().Name == contentEventName}");
             }
-            Plugin.Logger.LogError($"[ContentLib] GetEventID for {contentEventName} returned -1");
+            Debug.Log($"[ContentLib] GetEventID for {contentEventName} returned -1");
         }
 
         // Return the sanitized ID
@@ -54,7 +55,7 @@ internal class ContentEventIDMapperPatches {
     [HarmonyPrefix]
     [HarmonyPatch(nameof(ContentEventIDMapper.GetContentEvent))]
     public static bool GetContentEventPrefix(ref ushort id, ref ContentEvent __result) {
-        Plugin.Logger.LogDebug($"[ContentLib_Debug] GetContentEvent was called: {id} Normalized: {id - 2000} EventList count: {ContentHandler.EventList.Count}");
+        Debug.Log($"[ContentLib_Debug] GetContentEvent was called: {id} Normalized: {id - 2000} EventList count: {ContentHandler.EventList.Count}");
         // If the ID is part of the base game, get out and allow the original function to run
         if (id - 2000 < 0) return true;
 
