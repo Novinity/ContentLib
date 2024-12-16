@@ -58,6 +58,15 @@ public class ContentLoader {
     private static IBudgetCost LoadMonster(Monsters.CustomMonster customMonster) {
         return customMonster.objectPrefab.GetComponent<IBudgetCost>();
     }
+    
+    /// <summary>
+    /// Adds all registered items to the Item Database
+    /// </summary>
+    // private static void AddItems() {
+    //     foreach (Items.CustomItem item in Items.registeredItems) { 
+    //         Items.RegisterItemInDatabase(item.item);
+    //     }
+    // }
 
     /// <summary>
     /// Patch to call the AddMonstersToRoundSpawner method once it starts
@@ -69,4 +78,18 @@ public class ContentLoader {
         Debug.Log("[ContentLib] RoundSpawner postfix called");
         AddMonstersToRoundSpawner(__instance);
     }
+    
+    /// <summary>
+    /// Patch to add items to the shop
+    /// </summary>
+    // [HarmonyPatch(typeof(ShopHandler))]
+    // [HarmonyPatch(nameof(ShopHandler.InitShopHandler))]
+    // [HarmonyPrefix]
+    // private static bool Postfix_ShopHandler_InitShop(ShopHandler __instance) {
+    //     if (!Plugin.Instance.shopInitialized) {
+    //         AddItems();
+    //         Plugin.Instance.shopInitialized = true;
+    //     }
+    //     return true;
+    // }
 }

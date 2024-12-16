@@ -13,10 +13,10 @@ public class BundleHelper {
     /// </summary>
     /// <param name="filename"></param>
     /// <returns></returns>
-    public static AssetBundle LoadAssetBundle(string filename) {
+    public static AssetBundle LoadAssetBundle(string filename, Assembly assembly) {
         Debug.Log($"Loading Asset Bundle {filename}");
         // Get the calling mod's DLL location
-        string sAssemblyLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        string sAssemblyLocation = Path.GetDirectoryName(assembly.Location);
         // Load the bundle using the DLL location and passed file name
         AssetBundle loadedBundle = AssetBundle.LoadFromFile(Path.Combine(sAssemblyLocation, filename));
         // If the bundle doesn't exist
@@ -25,6 +25,14 @@ public class BundleHelper {
             return null;
         }
         return loadedBundle;
+    }
+
+    public static AssetBundle LoadEmbeddedAssetBundle(string resourceName, Assembly assembly) {
+        Debug.Log($"Loading Embedded Bundle {resourceName}");
+        using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+        {
+            return AssetBundle.LoadFromStream(stream);
+        }
     }
 
     /// <summary>
