@@ -5,36 +5,35 @@ using UnityEngine;
 [assembly: SecurityPermission(SecurityAction.RequestMinimum, SkipVerification = true)]
 namespace ContentLib;
 
-[ContentWarningPlugin("novinity.ContentLib", "1.0.1", false)]
+[ContentWarningPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_VERSION, false)]
 public class Plugin {
-    public static Plugin Instance { get; private set; } = null!;
     internal static Harmony? Harmony { get; set; }
 
-    public bool shopInitialized = false;
+    public static bool PluginLoaded = false;
+    public static bool shopInitialized = false;
 
-    private void Awake() {
-        Instance = this;
-
+    static Plugin() {
         Patch();
 
-        Debug.Log($"{MyPluginInfo.PLUGIN_GUID} v{MyPluginInfo.PLUGIN_VERSION} has loaded!");
+        PluginLoaded = true;
+        Logger.LogInfo($"{MyPluginInfo.PLUGIN_GUID} v{MyPluginInfo.PLUGIN_VERSION} has loaded!");
     }
 
     internal static void Patch() {
         Harmony ??= new Harmony(MyPluginInfo.PLUGIN_GUID);
 
-        Debug.Log("Patching...");
+        Logger.LogDebug("Patching...");
 
         Harmony.PatchAll();
 
-        Debug.Log("Finished patching!");
+        Logger.LogDebug("Finished patching!");
     }
 
     internal static void Unpatch() {
-        Debug.Log("Unpatching...");
+        Logger.LogDebug("Unpatching...");
 
         Harmony?.UnpatchSelf();
 
-        Debug.Log("Finished unpatching!");
+        Logger.LogDebug("Finished unpatching!");
     }
 }

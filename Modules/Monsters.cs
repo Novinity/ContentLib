@@ -36,7 +36,7 @@ public class Monsters {
         }
 
         // Run material fix up to allow monster to be rendered
-        FixMaterials(monster.objectPrefab);
+        ContentLoader.FixMaterials(monster.objectPrefab);
 
         // Add the monster object to the allowed network prefabs and add it to the registeredMonsters list
         ContentLoader.AddObjectToPool(monster.objectPrefab);
@@ -88,90 +88,10 @@ public class Monsters {
     /// <param name="gameObject"></param>
     public static void UseMonsterMaterial(GameObject gameObject) {
         // Get the M_Monster material from one of the vanilla monsters
-        Material targetMaterial = new Material(Resources.Load<GameObject>("Zombe").GetComponentInChildren<SkinnedMeshRenderer>().material);
+        Material targetMaterial = new Material(Resources.Load<GameObject>("Zombe")
+            .GetComponentInChildren<SkinnedMeshRenderer>().material);
         // Go through all the renderers in the monster and set it's material to the M_Monster material
         foreach (Renderer renderer in gameObject.GetComponentsInChildren<Renderer>())
-            renderer.material = targetMaterial;
-    }
-
-    /// <summary>
-    /// Method to fix up all materials in a object
-    /// </summary>
-    /// <param name="gameObject"></param>
-    private static void FixMaterials(GameObject gameObject) {
-        foreach (Renderer renderer in gameObject.GetComponentsInChildren<Renderer>()) {
-            // Loop through all materials in the current renderer
-            for (int i = 0; i < renderer.materials.Length; i++) {
-                // Create a new material using the shader name from the original, but not the actual shader it uses
-                Material targetMaterial = new Material(Shader.Find(renderer.materials[i].shader.name));
-                // Copy all properties from the original material to the new material
-                targetMaterial.CopyMatchingPropertiesFromMaterial(renderer.materials[i]);
-                // Set the renderer material at the current index to the newly created one
-                renderer.materials[i] = targetMaterial;
-            }
-        }
-    }
-
-    // Methods to add custom materials to selected renderer(s) or gameobjects.
-
-    /// <summary>
-    /// Default method to just set the material of a single renderer
-    /// </summary>
-    /// <param name="renderer"></param>
-    /// <param name="material"></param>
-    public static void SetCustomMaterial(Renderer renderer, Material material) {
-        // Create a new material using the shader name from the original, but not the actual shader it uses
-        // This is done this way because for whatever reason shaders don't load from asset bundles properly
-        // So we make an attempt to just use the same shader it uses
-        Material targetMaterial = new Material(Shader.Find(material.shader.name));
-        // Copy all properties from the passed material to the new material
-        targetMaterial.CopyMatchingPropertiesFromMaterial(material);
-        // Set the renderer's material to the new material
-        renderer.material = targetMaterial;
-    }
-
-    /// <summary>
-    /// Overload to set certain index of renderer materials
-    /// </summary>
-    /// <param name="renderer"></param>
-    /// <param name="material"></param>
-    /// <param name="index"></param>
-    public static void SetCustomMaterial(Renderer renderer, Material material, int index) {
-        // Create a new material using the shader name from the original, but not the actual shader it uses
-        Material targetMaterial = new Material(Shader.Find(material.shader.name));
-        // Copy all properties from the passed material to the new material
-        targetMaterial.CopyMatchingPropertiesFromMaterial(material);
-        // Set the renderer's material to the new material
-        renderer.materials[index] = targetMaterial;
-    }
-
-    /// <summary>
-    /// Overload to set the material of an array of renderers
-    /// </summary>
-    /// <param name="renderers"></param>
-    /// <param name="material"></param>
-    public static void SetCustomMaterial(Renderer[] renderers, Material material) {
-        // Create a new material using the shader name from the original, but not the actual shader it uses
-        Material targetMaterial = new Material(Shader.Find(material.shader.name));
-        // Copy all properties from the passed material to the new material
-        targetMaterial.CopyMatchingPropertiesFromMaterial(material);
-        foreach (Renderer r in renderers)
-            // Set the renderer's material to the new material
-            r.material = targetMaterial;
-    }
-
-    /// <summary>
-    /// Overload to set all renderers' materials under a gameobject
-    /// </summary>
-    /// <param name="monsterPrefab"></param>
-    /// <param name="material"></param>
-    public static void SetCustomMaterial(GameObject monsterPrefab, Material material) {
-        // Create a new material using the shader name from the original, but not the actual shader it uses
-        Material targetMaterial = new Material(Shader.Find(material.shader.name));
-        // Copy all properties from the passed material to the new material
-        targetMaterial.CopyMatchingPropertiesFromMaterial(material);
-        foreach (Renderer renderer in monsterPrefab.GetComponentsInChildren<Renderer>())
-            // Set the renderer's material to the new material
             renderer.material = targetMaterial;
     }
 
