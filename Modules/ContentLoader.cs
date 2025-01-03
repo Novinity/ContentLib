@@ -62,11 +62,11 @@ public class ContentLoader {
     /// <summary>
     /// Adds all registered items to the Item Database
     /// </summary>
-    // private static void AddItems() {
-    //     foreach (Items.CustomItem item in Items.registeredItems) { 
-    //         Items.RegisterItemInDatabase(item.item);
-    //     }
-    // }
+    private static void AddItems() {
+        foreach (Items.CustomItem item in Items.registeredItems) { 
+            Items.RegisterItemInDatabase(item.item);
+        }
+    }
 
     /// <summary>
     /// Patch to call the AddMonstersToRoundSpawner method once it starts
@@ -82,14 +82,96 @@ public class ContentLoader {
     /// <summary>
     /// Patch to add items to the shop
     /// </summary>
-    // [HarmonyPatch(typeof(ShopHandler))]
-    // [HarmonyPatch(nameof(ShopHandler.InitShopHandler))]
-    // [HarmonyPrefix]
-    // private static bool Postfix_ShopHandler_InitShop(ShopHandler __instance) {
-    //     if (!Plugin.Instance.shopInitialized) {
-    //         AddItems();
-    //         Plugin.Instance.shopInitialized = true;
-    //     }
-    //     return true;
-    // }
+    [HarmonyPatch(typeof(ShopHandler))]
+    [HarmonyPatch(nameof(ShopHandler.InitShopHandler))]
+    [HarmonyPrefix]
+    private static bool Postfix_ShopHandler_InitShop(ShopHandler __instance) {
+        if (!Plugin.shopInitialized) {
+            AddItems();
+            Plugin.shopInitialized = true;
+        }
+        return true;
+    }
+    
+    /// <summary>
+    /// Method to fix up all materials in a object
+    /// </summary>
+    /// <param name="gameObject"></param>
+    public static void FixMaterials(GameObject gameObject) {
+        Logger.LogDebug("Fixing materials for " + gameObject.name);
+        foreach (Renderer renderer in gameObject.GetComponentsInChildren<Renderer>()) {
+            // Loop through all materials in the current renderer
+            for (int i = 0; i < renderer.materials.Length; i++) {
+                // Create a new material using the shader name from the original, but not the actual shader it uses
+                Material targetMaterial = new Material(Shader.Find(renderer.materials[i].shader.name));
+                // Copy all properties from the original material to the new material
+                targetMaterial.CopyMatchingPropertiesFromMaterial(renderer.materials[i]);
+                // Set the renderer material at the current index to the newly created one
+                renderer.materials[i] = targetMaterial;
+            }
+        }
+    }
+
+    // Methods to add custom materials to selected renderer(s) or gameobjects.
+
+    /// <summary>
+    /// Default method to just set the material of a single renderer
+    /// </summary>
+    /// <param name="renderer"></param>
+    /// <param name="material"></param>
+    public static void SetCustomMaterial(Renderer renderer, Material material) {
+        // Create a new material using the shader name from the original, but not the actual shader it uses
+        // This is done this way because for whatever reason shaders don't load from asset bundles properly
+        // So we make an attempt to just use the same shader it uses
+        Material targetMaterial = new Material(Shader.Find(material.shader.name));
+        // Copy all properties from the passed material to the new material
+        targetMaterial.CopyMatchingPropertiesFromMaterial(material);
+        // Set the renderer's material to the new material
+        renderer.material = targetMaterial;
+    }
+
+    /// <summary>
+    /// Overload to set certain index of renderer materials
+    /// </summary>
+    /// <param name="renderer"></param>
+    /// <param name="material"></param>
+    /// <param name="index"></param>
+    public static void SetCustomMaterial(Renderer renderer, Material material, int index) {
+        // Create a new material using the shader name from the original, but not the actual shader it uses
+        Material targetMaterial = new Material(Shader.Find(material.shader.name));
+        // Copy all properties from the passed material to the new material
+        targetMaterial.CopyMatchingPropertiesFromMaterial(material);
+        // Set the renderer's material to the new material
+        renderer.materials[index] = targetMaterial;
+    }
+
+    /// <summary>
+    /// Overload to set the material of an array of renderers
+    /// </summary>
+    /// <param name="renderers"></param>
+    /// <param name="material"></param>
+    public static void SetCustomMaterial(Renderer[] renderers, Material material) {
+        // Create a new material using the shader name from the original, but not the actual shader it uses
+        Material targetMaterial = new Material(Shader.Find(material.shader.name));
+        // Copy all properties from the passed material to the new material
+        targetMaterial.CopyMatchingPropertiesFromMaterial(material);
+        foreach (Renderer r in renderers)
+            // Set the renderer's material to the new material
+            r.material = targetMaterial;
+    }
+
+    /// <summary>
+    /// Overload to set all renderers' materials under a gameobject
+    /// </summary>
+    /// <param name="monsterPrefab"></param>
+    /// <param name="material"></param>
+    public static void SetCustomMaterial(GameObject monsterPrefab, Material material) {
+        // Create a new material using the shader name from the original, but not the actual shader it uses
+        Material targetMaterial = new Material(Shader.Find(material.shader.name));
+        // Copy all properties from the passed material to the new material
+        targetMaterial.CopyMatchingPropertiesFromMaterial(material);
+        foreach (Renderer renderer in monsterPrefab.GetComponentsInChildren<Renderer>())
+            // Set the renderer's material to the new material
+            renderer.material = targetMaterial;
+    }
 }
